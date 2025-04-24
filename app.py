@@ -7,6 +7,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+app.config['DEBUG'] = False
 
 # Connect to MongoDB
 client = MongoClient("mongodb+srv://waleed:waleed123@cluster0.aqwbdzl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
@@ -99,7 +100,6 @@ def history():
     if 'user_id' not in session:
         return redirect('/login')
     user_history = history_col.find({'user_id': session['user_id']})
-    return render_template('history.html', history=user_history)
 
 @app.route('/logout')
 def logout():
