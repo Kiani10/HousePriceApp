@@ -4,13 +4,16 @@ from sklearn.linear_model import LinearRegression
 import numpy as np
 import pandas as pd
 import os
+from dotenv import load_dotenv
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['DEBUG'] = False
 
 # Connect to MongoDB
-client = MongoClient("mongodb+srv://waleed:waleed123@cluster0.aqwbdzl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+load_dotenv()  # Load .env variables
+client = MongoClient(os.getenv("MONGODB_URI"))
 db = client['HousePriceApp']
 users_col = db['users']
 history_col = db['search_history']
@@ -99,7 +102,15 @@ def predict():
 def history():
     if 'user_id' not in session:
         return redirect('/login')
+
     user_history = history_col.find({'user_id': session['user_id']})
+
+    # Check if there are any history records
+    if user_history:
+        # Pass the history to the template
+        return render_template('history.html', history=user_history)
+    else:
+        return render_template('history.html', history=None)
 
 @app.route('/logout')
 def logout():
