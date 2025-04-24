@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 from pymongo import MongoClient
 from sklearn.linear_model import LinearRegression
-import numpy as np
-import pandas as pd
 import os
 from dotenv import load_dotenv
 
