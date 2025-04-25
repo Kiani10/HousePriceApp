@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 from pymongo import MongoClient
 from sklearn.linear_model import LinearRegression
-import numpy as np
-import pandas as pd
 import os
 from dotenv import load_dotenv
 import pickle
@@ -23,7 +21,7 @@ history_col = db['search_history']
 # Load model at startup (no need for pandas or training again)
 with open("house_price_model.pkl", "rb") as f:
     model = pickle.load(f)
-    
+
 # Initialize model
 #model = LinearRegression()
 
