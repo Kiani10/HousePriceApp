@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import os
 from dotenv import load_dotenv
+import pickle
+
 
 
 app = Flask(__name__)
@@ -18,30 +20,34 @@ db = client['HousePriceApp']
 users_col = db['users']
 history_col = db['search_history']
 
+# Load model at startup (no need for pandas or training again)
+with open("house_price_model.pkl", "rb") as f:
+    model = pickle.load(f)
+    
 # Initialize model
-model = LinearRegression()
+#model = LinearRegression()
 
 # Train model using CSV + MongoDB history
-def train_model():
-    X, y = [], []
+# def train_model():
+#     X, y = [], []
 
-    # Load base data from CSV
-    if os.path.exists("initial_housing_data.csv"):
-        df = pd.read_csv("initial_housing_data.csv")
-        X.extend(df[['bedrooms', 'size', 'bathrooms', 'garage']].values.tolist())
-        y.extend(df['price'].values.tolist())
+#     # Load base data from CSV
+#     if os.path.exists("initial_housing_data.csv"):
+#         df = pd.read_csv("initial_housing_data.csv")
+#         X.extend(df[['bedrooms', 'size', 'bathrooms', 'garage']].values.tolist())
+#         y.extend(df['price'].values.tolist())
 
-    # Load historical data from MongoDB
-    data = list(history_col.find())
-    for d in data:
-        X.append(d['features'])
-        y.append(d['price'])
+#     # Load historical data from MongoDB
+#     data = list(history_col.find())
+#     for d in data:
+#         X.append(d['features'])
+#         y.append(d['price'])
 
-    if X and y:
-        model.fit(X, y)
+#     if X and y:
+#         model.fit(X, y)
 
-# Train model at startup
-train_model()
+# # Train model at startup
+# train_model()
 
 @app.route('/')
 def home():
@@ -93,7 +99,7 @@ def predict():
             })
 
             # Retrain model after new data
-            train_model()
+            #train_model()
         except Exception as e:
             prediction = f"Error: {e}"
     return render_template('predict.html', prediction=prediction)
